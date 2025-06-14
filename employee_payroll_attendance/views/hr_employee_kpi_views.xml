@@ -1,0 +1,57 @@
+<odoo>
+  <record id="view_hr_employee_form_kpi" model="ir.ui.view">
+    <field name="name">hr.employee.form.kpi</field>
+    <field name="model">hr.employee</field>
+    <field name="inherit_id" ref="hr.view_employee_form"/>
+    <field name="arch" type="xml">
+      <!-- Thêm các trường cần thiết vào form -->
+      <xpath expr="//sheet/group" position="after">
+        
+        <!-- KPI Management Section -->
+        <group string="KPI MANAGEMENT" groups="hr.group_hr_manager">
+          <field name="kpi_score"/>
+          <field name="kpi_review_date" readonly="1" attrs="{'invisible': [('kpi_review_date', '=', False)]}"/>
+          <field name="kpi_review_date_invalid" invisible="1"/>
+          <div attrs="{'invisible': [('kpi_review_date_invalid', '=', False)]}" class="alert alert-warning">
+            <strong>⚠️ KPI Review Date đã quá hạn!</strong>
+          </div>
+        </group>
+
+        <!-- Review Info Section -->
+        <group string="REVIEW INFO" groups="hr.group_hr_manager">
+          <group>
+            <field name="last_review_date"/>
+            <field name="next_review_date"/>
+            <field name="review_date_delayed" readonly="1" attrs="{'invisible': [('review_date_delayed', '=', False)]}"/>
+          </group>
+          <group>
+            <field name="total_unpaid_leave_days_review_cycle" readonly="1"/>
+            <field name="delay_review" readonly="1" attrs="{'invisible': [('delay_review', '=', 0)]}"/>
+            <div attrs="{'invisible': [('delay_review', '=', 0)]}" class="alert alert-info">
+              <strong>📅 Xét duyệt bị trì hoãn <field name="delay_review"/> tháng</strong>
+            </div>
+          </group>
+        </group>
+
+
+
+      </xpath>
+    </field>
+  </record>
+
+  <!-- Thêm view tree để hiển thị các trường quan trọng -->
+  <record id="view_hr_employee_tree_kpi" model="ir.ui.view">
+    <field name="name">hr.employee.tree.kpi</field>
+    <field name="model">hr.employee</field>
+    <field name="inherit_id" ref="hr.view_employee_tree"/>
+    <field name="arch" type="xml">
+      <xpath expr="//tree/field[@name='work_email']" position="after">
+        <field name="kpi_score" optional="hide"/>
+        <field name="kpi_review_date" optional="hide"/>
+        <field name="review_date_delayed" optional="hide"/>
+        <field name="delay_review" optional="hide"/>
+      </xpath>
+    </field>
+  </record>
+
+</odoo>

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- Kế thừa form employee -->
+        <record id="view_hr_employee_form_inherit_salary_review" model="ir.ui.view">
+            <field name="name">hr.employee.form.inherit.salary.review</field>
+            <field name="model">hr.employee</field>
+            <field name="inherit_id" ref="hr.view_employee_form"/>
+            <field name="arch" type="xml">
+                <!-- Chèn tab mới vào trong notebook -->
+                <xpath expr="//sheet/notebook" position="inside">
+                    <page string="Salary Review">
+                        <group>
+                            <field name="last_review_date"/>
+                            <field name="next_review_date" readonly="1"/>
+                            <field name="kpi_review_date" readonly="1"/>
+                            <field name="kpi_review_date_invalid" invisible="1"/>
+                        </group>
+                    </page> <!-- ✅ thêm thẻ đóng page -->
+                </xpath>
+            </field>
+        </record>
+        <record id="ir_cron_update_review_date" model="ir.cron">
+            <field name="name">Update Review Date for Employees</field>
+            <field name="model_id" ref="hr.model_hr_employee"/>
+            <field name="state">code</field>
+            <field name="code">model.cron_update_review_date_all_employees()</field>
+            <field name="interval_number">1</field>
+            <field name="interval_type">days</field>
+            <field name="numbercall">-1</field>
+            <field name="active">True</field>
+        </record>
+
+
+    </data>
+</odoo>

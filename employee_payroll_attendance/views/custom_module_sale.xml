@@ -1,0 +1,19 @@
+<odoo>
+    <!-- Cập nhật hành động để đảm bảo không có domain mặc định -->
+    <record id="sale.action_quotations_with_onboarding" model="ir.actions.act_window">
+        <field name="context" eval="{'search_default_my_quotation': False}"/>
+        <field name="domain">[]</field>        <!-- Đảm bảo không có domain -->
+    </record>
+
+
+    <record id="sale_order_tree_default_order" model="ir.ui.view">
+        <field name="name">sale.order.tree.default.order</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_quotation_tree_with_onboarding"/>
+        <field name="arch" type="xml">
+            <xpath expr="//tree" position="attributes">
+                <attribute name="default_order">name desc</attribute>
+            </xpath>
+        </field>
+    </record>
+</odoo>

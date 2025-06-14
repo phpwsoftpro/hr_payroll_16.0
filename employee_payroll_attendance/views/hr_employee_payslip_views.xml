@@ -1,0 +1,84 @@
+<odoo>
+    <!-- Form view to display Payslips within the Employee profile, including summaries -->
+    <record id="view_hr_employee_form_inherit_payslip" model="ir.ui.view">
+        <field name="name">hr.employee.form.inherit.payslip</field>
+        <field name="model">hr.employee</field>
+        <field name="inherit_id" ref="hr.view_employee_form"/>
+        <field name="arch" type="xml">
+            <notebook position="inside">
+                <page string="Payslips" class="col-12">
+                    <div class="o_form_full_width">
+                        <!-- Monthly Summary Section -->
+                        <group string="Monthly Summary" class="col-12">
+                            <field name="payslip_ids" context="{'default_employee_id': active_id}" readonly="1">
+                                <tree string="Payslip Records" on_click="action_view_attendance_details">
+                                    <field name="date_from" string="Start Date"/>
+                                    <field name="date_to" string="End Date"/>
+                                    <field name="worked_hours" string="Total Worked Hours" readonly="1"/>
+                                    <field name="total_working_days" string="Total Working Days" readonly="1"/>
+                                    <field name="total_working_hours" string="Total Working Hours" readonly="1"/>
+                                    <field name="approved_working_hours" string="Approved Working Hours" readonly="1"/>
+                                    <field name="total_salary" string="Total Salary" readonly="1"/>
+                                </tree>
+                            </field>
+                        </group>
+                    </div>
+                </page>
+            </notebook>
+        </field>
+    </record>
+
+    <!-- Action to show detailed attendance records in a popup -->
+    <record id="action_attendance_details" model="ir.actions.act_window">
+        <field name="name">Attendance Details</field>
+        <field name="res_model">hr.attendance</field>
+        <field name="view_mode">tree,form</field>
+        <field name="context">{'search_default_employee_id': active_id, 'default_date_from': date_from, 'default_date_to': date_to}</field>
+        <field name="target">new</field>
+    </record>
+
+    <!-- Tree view for attendance details -->
+    <record id="view_attendance_tree" model="ir.ui.view">
+        <field name="name">hr.attendance.tree</field>
+        <field name="model">hr.attendance</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="check_in" string="Check In"/>
+                <field name="check_out" string="Check Out"/>
+                <field name="worked_hours" string="Worked Hours"/>
+                <field name="approved" string="Approved"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_attendance_timesheet_form" model="ir.ui.view">
+        <field name="name">attendance.timesheet.details.form</field>
+        <field name="model">attendance.timesheet.details</field>
+        <field name="arch" type="xml">
+            <form string="Attendance and Timesheet Details">
+                <group>
+                    <field name="employee_id" readonly="1"/>
+                    <field name="date" readonly="1"/>
+                    <field name="check_in" readonly="1"/>
+                    <field name="check_out" readonly="1"/>
+                    <field name="worked_hours" readonly="1"/>
+                </group>
+                <group string="Timesheet Records">
+                    <field name="timesheet_html" readonly="1" widget="html"/>
+                </group>
+            </form>
+        </field>
+    </record>
+
+    <!-- Payroll Report Action for Employee Access Only -->
+    <record id="action_payslip_report" model="ir.actions.act_window">
+        <field name="name">My Payslips</field>
+        <field name="res_model">hr.payslip</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[('employee_id.user_id', '=', uid)]</field>
+        <field name="context">{'default_employee_id': uid}</field>
+    </record>
+
+    <!-- Payroll Report Menu Item for Employee Access Only -->
+    <menuitem id="menu_hr_payroll_report" name="Payroll Report" parent="hr.menu_hr_root" action="employee_payroll_attendance.action_payslip_report" groups="base.group_user"/>
+</odoo>

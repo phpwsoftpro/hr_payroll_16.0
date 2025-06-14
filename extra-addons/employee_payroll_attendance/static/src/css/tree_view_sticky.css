@@ -1,0 +1,6 @@
+.o_list_view table thead {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    background: white;
+}

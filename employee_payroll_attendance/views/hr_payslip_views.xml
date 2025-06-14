@@ -1,0 +1,290 @@
+<odoo>
+
+    <!-- Define an action to open the Payslip views -->
+    <record id="action_hr_payslip" model="ir.actions.act_window">
+        <field name="name">Payslips</field>
+        <field name="res_model">hr.payslip</field>
+        <field name="view_mode">tree,form</field>
+        <field name="context">{'group_by': ['date_to:month',"date_to:day"]}</field>
+
+    </record>
+
+    <!-- Define the top-level Manage Payslip menu item under the HR root menu, restricted to administrators -->
+    <menuitem id="menu_hr_manage_payslip_root" name="Manage Payslip" sequence="10" parent="hr.menu_hr_root" groups="base.group_system"/>
+
+    <!-- Define the Payslips submenu under Manage Payslip, restricted to administrators -->
+    <menuitem id="menu_hr_payslip" name="Payslips" parent="menu_hr_manage_payslip_root" action="action_hr_payslip" groups="base.group_system"/>
+
+    <!-- Define the form view for Payslip with status-based actions and new fields -->
+    <record id="view_payslip_form" model="ir.ui.view">
+        <field name="name">hr.payslip.form</field>
+        <field name="model">hr.payslip</field>
+        <field name="arch" type="xml">
+            <form string="Payslip">
+    <header>
+        <!-- Status-based action buttons -->
+        <button name="generate_payslip" type="object" string="Generate Payslip" class="btn-primary" attrs="{'invisible': [('status', '!=', 'draft')]}" groups="account.group_account_manager,base.group_system"/>
+        <button name="action_set_draft" type="object" string="Set to Draft" class="btn-secondary" attrs="{'invisible': [('status', '!=', 'generated')]}" groups="account.group_account_manager,base.group_system"/>
+        <button name="action_employee_confirm" type="object" string="Employee Confirm" class="btn-primary" attrs="{'invisible': [('status', '!=', 'generated')]}" groups="base.group_user"/>
+        <button name="action_revert_generated" type="object" string="Back to Generated" class="btn-secondary" attrs="{'invisible': [('status', '!=', 'employee_confirm')]}" groups="account.group_account_manager,base.group_system"/>
+        <button name="action_transfer_payment" type="object" string="Transfer Payment" class="btn-primary" attrs="{'invisible': [('status', '!=', 'employee_confirm')]}" groups="account.group_account_manager,base.group_system"/>
+        <button name="action_revert_transfer_payment" type="object" string="Back to Transfer Payment" class="btn-secondary" attrs="{'invisible': [('status', '!=', 'transfer_payment')]}" groups="account.group_account_manager,base.group_system"/>
+        <button name="action_done" type="object" string="Mark as Done" class="btn-success" attrs="{'invisible': [('status', '!=', 'transfer_payment')]}" groups="account.group_account_manager,base.group_system"/>
+        <field name="status" widget="statusbar" readonly="1"/>
+    </header>
+
+    <sheet>
+        <group>
+            <field name="employee_id"/>
+            <field name="date_from"/>
+            <field name="date_to"/>
+
+            <span class="d-inline-flex align-items-center">
+                <span class="me-2 text-nowrap">Full monthly fix price!</span>
+                <field name="full_monthly_fix_price" widget="boolean_toggle" class="mx-2"/>
+            </span><br/>
+
+            <span class="d-inline-flex align-items-center">
+                <span class="me-2 text-nowrap">Dev Inhouse ?</span>
+                <field name="dev_inhouse" widget="boolean_toggle" class="mx-2"/>
+            </span><br/>
+
+            <span class="d-inline-flex align-items-center">
+                <span class="me-2 text-nowrap">Include Saturdays ?</span>
+                <field name="include_saturdays" widget="boolean_toggle" class="mx-2"/>
+            </span><br/>
+
+            <span class="d-inline-flex align-items-center">
+                <span class="me-2 text-nowrap">Monthly Rate (USD)</span>
+                <field name="is_hourly_usd" widget="boolean_toggle" class="mx-2"/>
+                <span class="ms-2 text-nowrap">Hourly Rate (USD)</span>
+            </span><br/>
+
+            <span class="d-inline-flex align-items-center">
+                <span class="me-2 text-nowrap">Monthly Rate (VND)</span>
+                <field name="is_hourly_vnd" widget="boolean_toggle" class="mx-2"/>
+                <span class="ms-2 text-nowrap">Hourly Rate (VND)</span>
+            </span>
+        </group>
+
+        <group>
+            <field name="wage" placeholder="Monthly Wage (USD)"/>
+            <field name="hourly_rate" placeholder="Hourly Rate (USD)"/>
+            <field name="hourly_rate_vnd" placeholder="Hourly Rate (VND)"/>
+            <field name="monthly_wage_vnd" placeholder="Monthly Rate (VND)" />
+        </group>
+
+        <group string="Salary">
+            <field name="worked_hours" readonly="1"/>
+            <field name="total_salary" string="Base Salary + Bonus" readonly="1"/>
+            <field name="attendance_bonus" string="Attendance Raise (VND)" readonly="1"/>
+            <field name="base_salary_with_bonus" string="Base Salary With Bonus" readonly="1"/>
+            <field name="salary_raise_factor" string="Raise Factor" readonly="1"/>
+            <field name="kpi_score_snapshot" string="KPI Snapshot" readonly="1"/>
+            <field name="review_date" string="Review Date" readonly="1"/>
+        </group>
+
+        <group string="Probation">
+            <field name="probation_start_date"/>
+            <field name="probation_end_date"/>
+            <field name="probation_percentage"/>
+            <field name="probation_hours" readonly="1"/>
+            <field name="probation_salary" readonly="1"/>
+        </group>
+
+        <group>
+            <field name="currency_rate_fallback" string="Fallback USD to VND Rate"/>
+        </group>
+
+        <group string="Allowances and Bonuses">
+            <field name="insurance_vnd"/>
+            <field name="meal_allowance_vnd"/>
+            <field name="attendance_bonus" string="KPI Bonus (VND)" readonly="1"/>
+        </group>
+
+        <group string="Summary">
+            <field name="total_working_days" readonly="1"/>
+            <field name="total_working_hours" readonly="1"/>
+            <field name="approved_working_days" readonly="1"/>
+            <field name="approved_working_hours" readonly="1"/>
+        </group>
+
+        <group string="KPI &amp; Attendance">
+           
+            <field name="kpi_score"/>
+            <field name="attendance_rate" readonly="1"/>
+            <field name="excess_leave_days" readonly="1"/>
+        </group>
+
+        <group string="Review Info">
+        <field name="review_date_delayed" readonly="1"/>
+        <field name="total_unpaid_leave_days_review_cycle" readonly="1"/>
+        <field name="delay_review" readonly="1"/>
+    </group>
+
+        <group string="Attendance Records">
+            <field name="attendance_ids" readonly="0">
+                <tree string="Attendance Records" editable="bottom" limit="60">
+                    <field name="check_in"/>
+                    <field name="check_out"/>
+                    <field name="worked_hours"/>
+                    <field name="approved"/>
+                    <button name="toggle_approval" type="object" string="Approve" attrs="{'invisible': [('approved', '=', True)]}" class="btn-primary oe_inline"/>
+                    <button name="toggle_approval" type="object" string="Unapprove" attrs="{'invisible': [('approved', '=', False)]}" class="btn-danger oe_inline"/>
+                    <button name="action_view_details" type="object" string="View Details" class="btn-secondary oe_inline"/>
+                    <field name="approved_by" string="Approved by" readonly="1" attrs="{'invisible': [('approved', '=', False)]}"/>
+                </tree>
+            </field>
+        </group>
+    </sheet>
+</form>
+
+        </field>
+    </record>
+
+    <!-- Define the tree view for Payslip, including new fields for allowances and bonuses -->
+    <record id="view_payslip_tree" model="ir.ui.view">
+        <field name="name">hr.payslip.tree</field>
+        <field name="model">hr.payslip</field>
+        <field name="arch" type="xml">
+            <tree string="Payslips">
+                <field name="employee_id"/>
+                <field name="date_from"/>
+                <field name="date_to"/>
+                <field name="worked_hours"/>
+                <field name="total_salary"/>
+                <field name="base_salary_with_bonus" string="Base Salary + Bonus"/>
+                <field name="insurance"/>
+                <field name="meal_allowance"/>
+                <field name="attendance_bonus" string="KPI Bonus"/>
+                <field name="attendance_ratio"/>
+                <field name="salary_increase_rate"/>
+                <field name="salary_increase_reason"/>
+                <field name="other_bonus"/>
+                <field name="status"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Define the tree view for Payslip Report with new fields for allowances, bonuses, and attendance records -->
+    <record id="view_payslip_report_tree" model="ir.ui.view">
+        <field name="name">hr.payslip.report.tree</field>
+        <field name="model">hr.payslip.report</field>
+        <field name="arch" type="xml">
+            <tree string="Payslip Report">
+                <field name="employee_id"/>
+                <field name="date_from"/>
+                <field name="date_to"/>
+                <field name="worked_hours" />
+                <field name="insurance" />
+                <field name="meal_allowance" />
+               
+                <field name="other_bonus" />
+                <field name="total_working_days" />
+                <field name="total_working_hours" />
+                <field name="approved_working_hours" />
+                <field name="total_salary" />
+               
+                <field name="status"/>
+                <field name="probation_start_date"/>
+                <field name="probation_end_date"/>
+                <field name="probation_percentage"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Define the form view for the Payslip Report, including attendance records and button toggling based on status -->
+    <record id="view_payslip_report_form" model="ir.ui.view">
+        <field name="name">hr.payslip.report.form</field>
+        <field name="model">hr.payslip.report</field>
+        <field name="arch" type="xml">
+            <form string="Payslip Report">
+                <header>
+                    <!-- Approve Timesheet button, visible only when status is 'generated' -->
+                    <button name="action_employee_confirm" type="object" string="Approve Timesheet" class="btn-primary" attrs="{'invisible': [('status', '!=', 'generated')]}"/>
+                    <!-- Display "Timesheet Approved" when status is not 'generated', and disable the button -->
+                    <button string="Timesheet Approved" class="btn-secondary" attrs="{'invisible': [('status', '=', 'generated')]}"/>
+                    <field name="status" widget="statusbar" readonly="1"/>
+                </header>
+                <sheet>
+                    <!-- Form details for the payslip report -->
+                    <group>
+                        <field name="employee_id" readonly="1"/>
+                        <field name="date_from" readonly="1"/>
+                        <field name="date_to" readonly="1"/>
+                    </group>
+                    <group>
+                        <field name="worked_hours" readonly="1"/>
+                        <field name="total_salary" readonly="1"/>
+                       
+                        <field name="insurance" readonly="1"/>
+                        <field name="meal_allowance" readonly="1"/>
+                        
+                        <field name="other_bonus" readonly="1"/>
+                        <field name="total_working_days" readonly="1"/>
+                        <field name="total_working_hours" readonly="1"/>
+                        <field name="approved_working_hours" readonly="1"/>
+                    </group>
+                    <group string="Attendance Records">
+                        <field name="attendance_ids" readonly="1">
+                            <tree string="Attendance Records" limit="60">
+                                <!-- <field name="date"/> -->
+                                <field name="check_in"/>
+                                <field name="check_out"/>
+                                <field name="worked_hours"/>
+                                <field name="approved"/>
+                            </tree>
+                        </field>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Define action for hr.payslip.report to allow access to all reports for admins -->
+    <record id="action_hr_payslip_report" model="ir.actions.act_window">
+        <field name="name">Payslip Reports</field>
+        <field name="res_model">hr.payslip.report</field>
+        <field name="view_mode">tree,form</field>
+        <field name="context">{'group_by': ['date_to:month']}</field>
+    </record>
+
+    <!-- Define a menu item under HR root menu for admin to view all payslip reports -->
+    <menuitem id="menu_hr_payslip_report_admin" name="Payslip Reports" parent="hr.menu_hr_root" action="action_hr_payslip_report" groups="base.group_system"/>
+
+    <!-- Define restricted access for employees to view only their own payslip reports -->
+    <record id="hr_payslip_report_employee_rule" model="ir.rule">
+        <field name="name">Payslip Report: Employee Own Records</field>
+        <field name="model_id" ref="model_hr_payslip_report"/>
+        <field name="domain_force">[('employee_id.user_id', '=', user.id)]</field>
+        <field name="groups" eval="[(4, ref('base.group_user'))]"/>
+    </record>
+
+    <!-- Define unrestricted access for administrators to view all payslip reports -->
+    <record id="hr_payslip_report_admin_rule" model="ir.rule">
+        <field name="name">Payslip Report: Admin Full Access</field>
+        <field name="model_id" ref="model_hr_payslip_report"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('base.group_system'))]"/>
+    </record>
+    <!-- Action: nhân viên chỉ thấy bảng lương của mình -->
+<record id="action_hr_payslip_employee" model="ir.actions.act_window">
+    <field name="name">My Payslips</field>
+    <field name="res_model">hr.payslip</field>
+    <field name="view_mode">tree,form</field>
+    <field name="domain">[('employee_id.user_id', '=', uid)]</field>
+    <field name="context">{}</field>
+    <field name="help" type="html">
+        <p>View your own payslips here.</p>
+    </field>
+</record>
+
+<!-- Menu cho nhân viên -->
+<menuitem id="menu_hr_my_payslip"
+          name="My Payslips"
+          parent="hr.menu_hr_root"
+          action="action_hr_payslip_employee"
+          sequence="25"
+          groups="base.group_user"/>
+
+</odoo>
