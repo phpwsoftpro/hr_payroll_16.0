@@ -44,6 +44,14 @@
         "views/custom_module_sale.xml",
         "views/work_saturday_schedule_view.xml",
     ],
+    "images": [
+        "static/description/banner.png",
+        "static/description/instructions_1.png",
+        "static/description/instructions_2.png",
+        "static/description/instructions_3.png",
+        "static/description/instructions_4.png",
+        "static/description/instructions_5.png",
+    ],
     "installable": True,
     "application": False,
 }
