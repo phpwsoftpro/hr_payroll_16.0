@@ -3,15 +3,13 @@
     "version": "16.0.1.0.0",
     "category": "Human Resources",
     "summary": "Calculate payroll based on approved attendance records",
-    "description": """
-<p>This module integrates attendance approval into payroll calculation in Odoo.</p>
-<p>It enhances accuracy in salary computation by basing it on verified employee presence.</p>
-<ul>
-<li>Includes visual reporting tools</li>
-<li>Supports weekend work scheduling</li>
-<li>Fully integrated with Odoo HR & Payroll apps</li>
-</ul>
-""",
+    "description": "<p>This module integrates attendance approval into payroll calculation in Odoo.</p>"
+    "<p>It enhances accuracy in salary computation by basing it on verified employee presence.</p>"
+    "<ul>"
+    "<li>Includes visual reporting tools</li>"
+    "<li>Supports weekend work scheduling</li>"
+    "<li>Fully integrated with Odoo HR & Payroll apps</li>"
+    "</ul>",
     "author": "WSOFT  PRO Co. Ltd.",
     "maintainer": "WSOFT PRO Co. Ltd.",
     "license": "LGPL-3",
@@ -46,6 +44,14 @@
         "views/custom_module_sale.xml",
         "views/work_saturday_schedule_view.xml",
     ],
-    "installable": true,
-    "application": false,
+    "images": [
+        "static/description/banner.png",
+        "static/description/instructions_1.png",
+        "static/description/instructions_2.png",
+        "static/description/instructions_3.png",
+        "static/description/instructions_4.png",
+        "static/description/instructions_5.png",
+    ],
+    "installable": True,
+    "application": False,
 }

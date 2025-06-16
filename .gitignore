@@ -1,0 +1,5 @@
+extra-addons/
+config/
+*.ipynb
+Dockerfile
+docker-compose.yml

@@ -1,3 +1,0 @@
-id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_auto_generate_payslip,access_auto_generate_payslip,model_hr_attendance,,1,1,1,1
-access_work_saturday_schedule_hr_manager,access.work.saturday.schedule.hr.manager,model_work_saturday_schedule,hr.group_hr_manager,1,1,1,1
