@@ -13,7 +13,8 @@
 </ul>
 """,
     "author": "WSOFT  PRO Co. Ltd.",
-    "license": "Other proprietary",
+    "maintainer": "WSOFT PRO Co. Ltd.",
+    "license": "LGPL-3",
     "depends": [
         "hr_attendance",
         "sale_timesheet",
@@ -45,9 +46,6 @@
         "views/custom_module_sale.xml",
         "views/work_saturday_schedule_view.xml",
     ],
-    "images": [],
-    "price": 0.0,
-    "currency": "EUR",
     "installable": true,
     "application": false,
 }
